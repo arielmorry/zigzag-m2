@@ -47,7 +47,7 @@ class Yesno implements OptionSourceInterface
      */
     public function toArray()
     {
-        $isEnabled = $this->_helper->isShippingTypeEnabledByCarrier(Reverse::ZIGZAG_SHIPPING_TYPE_CODE);
+        $isEnabled = $this->_helper->isShippingTypeEnabledByCarrier(Carrier::ZIGZAG_SHIPPING_TYPE_CODE);
         $options = [
             0 => __('No')
         ];
