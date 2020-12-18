@@ -60,7 +60,7 @@ class View
             $view->addButton(
                 'order_print_zigzag_label',
                 [
-                    'label'   => __('Print Shipment Label'),
+                    'label'   => __('Print ZigZag Shipment Label'),
                     'onclick' => "window.open('$url','popUpWindow','height=700,width=700,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');",
                     'class'   => 'print-label',
                 ]
