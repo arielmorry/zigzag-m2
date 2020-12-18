@@ -27,19 +27,16 @@ class OrderStatus implements \Magento\Framework\Data\OptionSourceInterface
      */
     public function toOptionArray(): array
     {
-        $ignore = [
-            Order::STATE_CANCELED,
-            Order::STATE_CLOSED,
-            Order::STATE_COMPLETE,
-            Order::STATUS_FRAUD,
-            Order::STATE_HOLDED,
-            Info::ORDER_STATUS_CANCELED_REVERSAL,
-            Info::ORDER_STATUS_REVERSED,
+        $allow = [
+            Order::STATE_NEW,
+            Order::STATE_PENDING_PAYMENT,
+            Order::STATE_PROCESSING,
+            Info::PAYMENTSTATUS_PENDING,
         ];
 
         $options = $this->orderStatusCollectionFactory->create()->toOptionArray();
         foreach ($options as $k => $option) {
-            if (in_array($option['value'], $ignore)) {
+            if (!in_array($option['value'], $allow)) {
                 unset($options[$k]);
             }
         }
