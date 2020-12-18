@@ -98,12 +98,14 @@ class Base
                 static::WS_ENDPOINT,
                 $options
             );
-        } catch (GuzzleException $exception) {
+        } catch (GuzzleException $e) {
             /** @var Response $response */
             $response = $this->_responseFactory->create([
-                'status' => $exception->getCode(),
-                'reason' => $exception->getMessage()
+                'status' => $e->getCode(),
+                'reason' => $e->getMessage()
             ]);
+            $msg = "Error while making request to ZigZag";
+            $this->_helper->log('error', $msg, $e, true);
         }
 
         return $response;
