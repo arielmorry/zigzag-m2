@@ -8,6 +8,7 @@
                 <name>Double</name>
                 <shipping_cost>10</shipping_cost>
                 <sallowspecific>0</sallowspecific>
+                <auto_shipment>0</auto_shipment>
                 <order_statuses>processing</order_statuses>
                 <sort_order>15</sort_order>
                 <model>Zigzag\Double\Model\Carrier\Double</model>
