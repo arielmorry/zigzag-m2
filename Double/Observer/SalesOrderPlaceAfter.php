@@ -55,7 +55,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
             $result = $this->_insertShipment->insert($order, $this->_carrier);
 
             if ($result) {
-                $this->_shipping->shipOrder($order, $this->_carrier, $result);
+                $this->_shipping->shipOrder($order, $result);
             }
         }
 

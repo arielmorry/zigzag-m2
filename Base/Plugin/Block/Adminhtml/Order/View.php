@@ -27,6 +27,31 @@ class View
      */
     public function beforeSetLayout(\Magento\Sales\Block\Adminhtml\Order\View $view)
     {
+        $this->addShippingLabelButton($view);
+        $this->addZigZag($view);
+    }
+
+    /**
+     * @param \Magento\Sales\Block\Adminhtml\Order\View $view
+     */
+    protected function addZigZag(\Magento\Sales\Block\Adminhtml\Order\View $view)
+    {
+        $url = $view->getUrl('zigzag/order/ship', ['order_id' => $view->getOrderId()]);
+        $view->addButton(
+            'order_ship_to_zigzag',
+            [
+                'label'   => __('Ship Order To ZigZag'),
+                'onclick' => 'setLocation(\'' . $url . '\')',
+                'class'   => 'ship-to-zigzag'
+            ]
+        );
+    }
+
+    /**
+     * @param \Magento\Sales\Block\Adminhtml\Order\View $view
+     */
+    protected function addShippingLabelButton(\Magento\Sales\Block\Adminhtml\Order\View $view)
+    {
         /** @var Order $order */
         $order = $this->_orderRepository->get($view->getOrderId());
         $carrierCode = $order->getShippingMethod(true)->getCarrierCode();
@@ -36,8 +61,8 @@ class View
                 'order_print_zigzag_label',
                 [
                     'label'   => __('Print Shipment Label'),
+                    'onclick' => "window.open('$url','popUpWindow','height=700,width=700,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');",
                     'class'   => 'print-label',
-                    'onclick' => "window.open('$url','popUpWindow','height=700,width=700,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');"
                 ]
             );
         }

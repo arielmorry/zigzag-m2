@@ -5,11 +5,11 @@ namespace Zigzag\Base\Controller\Adminhtml\Order;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\View\Result\Page;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\ResultFactory;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
 class Label extends Action implements HttpGetActionInterface
 {
@@ -51,7 +51,7 @@ class Label extends Action implements HttpGetActionInterface
     }
 
     /**
-     * @return \Magento\Framework\App\ResponseInterface|Raw|\Magento\Framework\Controller\ResultInterface
+     * @return ResponseInterface|Raw|ResultInterface
      */
     public function execute()
     {

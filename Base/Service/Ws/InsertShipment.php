@@ -21,28 +21,37 @@ class InsertShipment extends Base
      * @param bool $checkStatus
      * @return string|void
      */
-    public function insert($order, $carrier, $checkStatus = true)
+    public function insert($order, $carrier = null, $checkStatus = true)
     {
-        $orderStatus     = $order->getStatus();
-        $configStatuses  = $this->_helper->getConfig($carrier::ZIGZAG_SHIPPING_ORDER_STATUSES_PATH);
-        $allowedStatuses = explode(',', $configStatuses);
+        if ($carrier && $checkStatus) {
+            $orderStatus     = $order->getStatus();
+            $configStatuses  = $this->_helper->getConfig($carrier::ZIGZAG_SHIPPING_ORDER_STATUSES_PATH);
+            $allowedStatuses = [];
 
-        if ($checkStatus && !in_array($orderStatus, $allowedStatuses)) {
-            return;
+            if ($configStatuses) {
+                $allowedStatuses = explode(',', $configStatuses);
+            }
+
+            if (!in_array($orderStatus, $allowedStatuses)) {
+                return;
+            }
         }
 
+        $shippingType = $carrier ? $carrier::ZIGZAG_SHIPPING_TYPE_CODE : 0;
         $shippingAddress = $order->getShippingAddress();
-        $shippingType = $carrier::ZIGZAG_SHIPPING_TYPE_CODE;
-
         $street = implode(' ', $shippingAddress->getStreet());
-        preg_match('!\d+!', $street, $matches);
-        $houseNumber = $matches[0] ?? 0;
+
+        $ownerPhone = $this->_helper->getConfig(
+            'general/store_information/phone',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $order->getStoreId()
+        );
 
         $data = [
             'KOD_KIVUN'              => 1,
             'MOSER'                  => '',
             'HEVRA_MOSER'            => '',
-            'TEL_MOSER'              => '',
+            'TEL_MOSER'              => $ownerPhone ? preg_replace('/\D/', '', $ownerPhone) : '',
             'EZOR_MOSER'             => 0,
             'SHM_EIR_MOSER'          => '',
             'REHOV_MOSER'            => '',
@@ -54,12 +63,12 @@ class InsertShipment extends Base
             'EZOR_MEKABEL'           => 0,
             'SHM_EIR_MEKABEL'        => $shippingAddress->getCity(),
             'REHOV_MEKABEL'          => $street,
-            'MISPAR_BAIT_MEKABEL'    => $houseNumber,
+            'MISPAR_BAIT_MEKABEL'    => '',
             'koma_MEKABEL'           => '',
             'SUG_SHLIHUT'            => $shippingType,
             'HEAROT'                 => '',
             'SHEM_MAZMIN'            => '',
-            'MICROSOFT_ORDER_NUMBER' => '',
+            'MICROSOFT_ORDER_NUMBER' => $order->getIncrementId(),
             'HEAROT_LKTOVET_MKOR'    => '',
             'HEAROT_LKTOVET_YAAD'    => '',
             'SHEM_CHEVRA'            => '',

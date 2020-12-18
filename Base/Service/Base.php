@@ -56,7 +56,7 @@ class Base
         $this->_helper          = $helper;
         $this->_clientFactory   = $clientFactory;
         $this->_responseFactory = $responseFactory;
-        $this->_eventManager = $eventManager;
+        $this->_eventManager    = $eventManager;
     }
 
     /**
@@ -104,7 +104,7 @@ class Base
                 'status' => $e->getCode(),
                 'reason' => $e->getMessage()
             ]);
-            $msg = "Error while making request to ZigZag";
+            $msg      = "Error while making request to ZigZag";
             $this->_helper->log('error', $msg, $e, true);
         }
 

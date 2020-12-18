@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Shipping\Model\Tracking\Result\StatusFactory;
 use Exception;
 use Zigzag\Base\Service\Ws\ShipmentStatus;
+use Magento\Shipping\Model\CarrierFactory;
 
 class Shipping extends AbstractHelper
 {
@@ -59,6 +60,11 @@ class Shipping extends AbstractHelper
     protected $_shipmentStatus;
 
     /**
+     * @var CarrierFactory
+     */
+    protected $_carrierFactory;
+
+    /**
      * ShippingTypes constructor.
      * @param Context $context
      * @param ConvertOrder $convertOrder
@@ -68,6 +74,7 @@ class Shipping extends AbstractHelper
      * @param TrackFactory $trackFactory
      * @param StatusFactory $statusFactory
      * @param ShipmentStatus $shipmentStatus
+     * @param CarrierFactory $carrierFactory
      * @param Data $helper
      */
     public function __construct(
@@ -79,6 +86,7 @@ class Shipping extends AbstractHelper
         TrackFactory $trackFactory,
         StatusFactory $statusFactory,
         ShipmentStatus $shipmentStatus,
+        CarrierFactory $carrierFactory,
         Data $helper
     )
     {
@@ -92,25 +100,32 @@ class Shipping extends AbstractHelper
         $this->_trackStatusFactory = $statusFactory;
         $this->_shipmentStatus     = $shipmentStatus;
         $this->_helper             = $helper;
+        $this->_carrierFactory     = $carrierFactory;
     }
 
     /**
      * @param Order $order
-     * @param $carrier
      * @param int $trackingNumber
      */
-    public function shipOrder(Order $order, $carrier, $trackingNumber = 0)
+    public function shipOrder(Order $order, $trackingNumber = 0)
     {
         // Save order to repository so we can retrieve full info
         $order = $this->_orderRepository->save($order);
+        $carrier = $this->_carrierFactory->get($order->getShippingMethod(true)->getCarrierCode());
+        $createNewShipment = !$order->hasShipments();
 
-        if (!$order->canShip()) {
-            $msg = "Error while creating shipment for ZigZag. Order Can't be shipped\nOrder Number: {$order->getIncrementId()}";
-            $this->_helper->log('error', $msg, null, true);
-            return;
+        if (!$createNewShipment) {
+            $shipment = $order->getShipmentsCollection()->getFirstItem();
+        } else {
+            if (!$order->canShip()) {
+                $msg = "Error while creating shipment for ZigZag. Order Can't be shipped\nOrder Number: {$order->getIncrementId()}";
+                $this->_helper->log('error', $msg, null, true);
+                return;
+            }
+            $shipment = $this->_convertOrder->toShipment($order);
         }
 
-        $shipment = $this->_convertOrder->toShipment($order);
+
         try {
             foreach ($order->getAllItems() as $orderItem) {
                 if (!$orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
@@ -132,7 +147,21 @@ class Shipping extends AbstractHelper
             $this->_orderRepository->save($shipment->getOrder());
 
             // Add Notification and Tracking
-            $this->addTrackingToShipment($trackingNumber, $carrier, $shipment);
+            $title = $order->getShippingDescription();
+            if (defined(get_class($carrier) . '::ZIGZAG_SHIPPING_NAME_PATH')) {
+                $title = $this->_helper->getConfig($carrier::ZIGZAG_SHIPPING_NAME_PATH);
+            }
+
+            $track = $this->_trackFactory->create()
+                ->setNumber(
+                    $trackingNumber
+                )->setCarrierCode(
+                    $carrier->getCarrierCode()
+                )->setTitle(
+                    $title
+                );
+            $shipment->addTrack($track);
+            $this->_shipmentNotifier->notify($shipment);
 
             // Save Shipment again
             $this->_shipmentRepository->save($shipment);
@@ -141,30 +170,6 @@ class Shipping extends AbstractHelper
             $msg = "Error while saving shipment for ZigZag\nError Code: {$e->getCode()}\nError Message: {$e->getMessage()}\nOrder Number: {$order->getIncrementId()}";
             $this->_helper->log('error', $msg, null, true);
         }
-    }
-
-    /**
-     * @param string $trackingNumber
-     * @param $carrier
-     * @param Shipment $shipment
-     * @return mixed
-     * @throws MailException
-     */
-    public function addTrackingToShipment($trackingNumber, $carrier, $shipment)
-    {
-        // Add Notification and Tracking
-        $track = $this->_trackFactory->create()
-            ->setNumber(
-                $trackingNumber
-            )->setCarrierCode(
-                $carrier->getCarrierCode()
-            )->setTitle(
-                $this->_helper->getConfig($carrier::ZIGZAG_SHIPPING_NAME_PATH)
-            );
-        $shipment->addTrack($track);
-        $this->_shipmentNotifier->notify($shipment);
-
-        return $shipment;
     }
 
     /**
