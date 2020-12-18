@@ -1,0 +1,38 @@
+"This list is controlled by ZigZag (Save configuration to refresh)","This list is controlled by ZigZag (Save configuration to refresh)"
+"Please provide username, password and save configuration in order to populate this list. If credentials are set and this list is still empty, please contact ZigZag customer support.","Please provide username, password and save configuration in order to populate this list. If credentials are set and this list is still empty, please contact ZigZag customer support."
+"Sorry, but this shipping method is not applicable due to destination country or minimum cart amount.","Sorry, but this shipping method is not applicable due to destination country or minimum cart amount."
+"Shipping method <b>Disabled</b> by ZigZag.","Shipping method <b>Disabled</b> by ZigZag."
+No,No
+Yes,Yes
+Date,Date
+From,From
+To,To
+Comment,Comment
+"Non of those options","Non of those options"
+"ZigZag Base","ZigZag Base"
+Username,Username
+Password,Password
+"Email To Notify About Errors","Email To Notify About Errors"
+"Enabled Shipping Types By ZigZag","Enabled Shipping Types By ZigZag"
+"ZigZag Double","ZigZag Double"
+Enabled,Enabled
+Title,Title
+"Method Name","Method Name"
+"Minimum Order Amount","Minimum Order Amount"
+"Shipping Cost","Shipping Cost"
+"Ship to Applicable Countries","Ship to Applicable Countries"
+"Ship to Specific Countries","Ship to Specific Countries"
+"Send Shipment To ZigZag For Order Statuses","Send Shipment To ZigZag For Order Statuses"
+"Show Method if Not Applicable","Show Method if Not Applicable"
+"Sort Order","Sort Order"
+"ZigZag Regular","ZigZag Regular"
+"Shipment Sender","מוסר משלוח"
+"Shipment Telephone","טלפון"
+"Shipment Line","קו"
+"Receiver Name","שם מקבל"
+"Receiver Company","חברה"
+"Receiver Phone","טלפון"
+"Receiver Address","כתובת"
+"Receiver Type","סוג"
+"Receiver Regular","רגילה"
+"Shipment Billed Client","לקוח מחוייב"

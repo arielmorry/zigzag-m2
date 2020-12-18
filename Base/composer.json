@@ -1,0 +1,34 @@
+{
+  "name": "zigzag/base",
+  "description": "Zigzag base shipping module",
+  "require": {
+    "php": "~7.1.3||~7.2.0||~7.3.0",
+    "magento/framework": "102.0.*",
+    "magento/module-backend": "101.0.*",
+    "magento/module-catalog": "103.0.*",
+    "magento/module-config": "101.1.*",
+    "magento/module-directory": "100.3.*",
+    "magento/module-quote": "101.1.*",
+    "magento/module-sales": "102.0.*",
+    "magento/module-sales-rule": "101.1.*",
+    "magento/module-shipping": "100.3.*",
+    "magento/module-store": "101.0.*",
+    "ext-simplexml": "*",
+    "ext-libxml": "*",
+    "ext-json": "*",
+    "laminas/laminas-barcode": "^2.8"
+  },
+  "type": "magento2-module",
+  "license": [
+    "Commercial"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Zigzag\\Base\\": ""
+    }
+  },
+  "version": "1.0.0"
+}

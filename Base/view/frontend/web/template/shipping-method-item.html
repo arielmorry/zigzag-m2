@@ -1,0 +1,80 @@
+<tr class="row"
+    click="element.selectShippingMethod">
+    <td class="col col-method">
+        <input type="radio"
+               class="radio"
+               ifnot="method.error_message"
+               ko-checked="element.isSelected"
+               ko-value="method.carrier_code + '_' + method.method_code"
+               attr="'aria-labelledby': 'label_method_' + method.method_code + '_' + method.carrier_code + ' ' + 'label_carrier_' + method.method_code + '_' + method.carrier_code,
+                    'checked': element.rates().length == 1 || element.isSelected" />
+    </td>
+    <td class="col col-price">
+        <each args="element.getRegion('price')" render="" />
+    </td>
+    <td class="col col-method"
+        attr="'id': 'label_method_' + method.method_code + '_' + method.carrier_code"
+        text="method.method_title" />
+    <td class="col col-carrier"
+        attr="'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code"
+        text="method.carrier_title" />
+</tr>
+
+<tr class="row" if="element.isSelected() === method.carrier_code + '_' + method.method_code && element.isZigzag(method.carrier_code + '_' + method.method_code) && element.zigzagAvailability().length" ifnot="method.error_message">
+    <td></td>
+    <td colspan="4">
+        <table class="zigzag-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th data-bind="i18n: 'Date'"></th>
+                <th data-bind="i18n: 'From'"></th>
+                <th data-bind="i18n: 'To'"></th>
+                <th data-bind="i18n: 'Comment'"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- ko foreach: element.zigzagAvailability -->
+            <tr>
+                <td>
+                    <input type="radio"
+                           class="radio"
+                           ko-value="date + '_' + time_from + '_' + time_to"
+                           attr="'name': 'zigzag-availability'"
+                           ko-checked="element.zigzagAvailabilitySelected"
+                           data-bind="checked: element.zigzagAvailabilitySelected"
+                    />
+                </td>
+                <td data-bind="text: date"></td>
+                <td data-bind="text: time_from"></td>
+                <td data-bind="text: time_to"></td>
+                <td data-bind="text: comment"></td>
+            </tr>
+            <!-- /ko -->
+            <tr>
+                <td>
+                    <input type="radio"
+                           class="radio"
+                           ko-value="0"
+                           attr="'name': 'zigzag-availability'"
+                           data-bind="checked: element.zigzagAvailabilitySelected"
+                    />
+                </td>
+                <td colspan="4" data-bind="i18n: 'Non of those options'"></td>
+            </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
+<tr class="row row-error"
+    if="method.error_message">
+    <td class="col col-error" colspan="4">
+        <div role="alert" class="message error">
+            <div text="method.error_message"></div>
+        </div>
+        <span class="no-display">
+            <input type="radio"
+                   attr="'value' : method.method_code, 'id': 's_method_' + method.method_code" />
+        </span>
+    </td>
+</tr>

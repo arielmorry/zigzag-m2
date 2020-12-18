@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="zigzagbase" translate="label" type="text" sortOrder="900" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>ZigZag Base</label>
+                <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1">
+                    <label>Username</label>
+                </field>
+                <field id="password" translate="label" type="password" sortOrder="30" showInDefault="1">
+                    <label>Password</label>
+                </field>
+                <field id="email" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email To Notify About Errors</label>
+                    <comment>Leave empty to disable / Errors are also logged to Magento's log files.</comment>
+                </field>
+                <field id="shipping_types" type="multiselect" translate="label"  sortOrder="45" showInDefault="1">
+                    <label>Enabled Shipping Types By ZigZag</label>
+                    <source_model>Zigzag\Base\Model\Config\Source\ShippingTypes</source_model>
+                    <frontend_model>Zigzag\Base\Model\Config\Frontend\ShippingTypes</frontend_model>
+                    <comment><model>Zigzag\Base\Model\Config\Comment\ShippingTypes</model></comment>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

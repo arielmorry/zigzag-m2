@@ -1,0 +1,154 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+/** @var \Zigzag\Base\Block\Adminhtml\Order\Label $block */
+/** @var \Magento\Sales\Model\Order $order */
+$order          = $block->getOrder();
+$trackingNumber = $block->getTrackingNumber();
+?>
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Zigzag Printing Label</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Arimo', sans-serif;
+            direction: rtl;
+            background-color: #efefef;
+        }
+
+        .admin-zigzag-label {
+            background-color: #fff;
+            display: block;
+            margin: 0 auto;
+            padding: 0.3cm;
+            width: 10cm;
+            height: 10cm;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .d-flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .flex-justify-between {
+            justify-content: space-between;
+        }
+
+        .m-b-50 {
+            margin-bottom: 0.5cm;
+        }
+
+        .receiver-details {
+            border: 1px dashed #000;
+            padding: 10px;
+        }
+
+        button {
+            width: 150px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+            }
+            button {
+                display: none;
+            }
+        }
+
+        @page {
+            size: auto;
+            margin: 0;
+            padding: 0;
+            border: 0 none;
+            width: 10cm;
+            height: 10cm;
+        }
+    </style>
+</head>
+
+<body>
+<div class="admin-zigzag-label">
+    <?php if ($trackingNumber): ?>
+        <div class="barcode-wrapper text-center m-b-50">
+            <div class="barcode"><img src="<?php echo $block->getBarcodeBase64() ?>" alt=""></div>
+        </div>
+        <div class="sender-details m-b-50">
+            <div class="row">
+                <strong><?php echo __('Shipment Sender') ?>:</strong>
+                <span><?php echo $block->getStoreInfo()->getName() ?></span> -
+                <span><?php echo $block->getStoreInfo()->getData('street_line1') ?></span> -
+                <span><?php echo $block->getStoreInfo()->getData('street_line2') ?></span>
+                <span><?php echo $block->getStoreInfo()->getCity() ?></span>
+            </div>
+            <div class="row d-flex flex-justify-between">
+                <div class="phone">
+                    <strong><?php echo __('Shipment Telephone') ?>:</strong>
+                    <span><?php echo $block->getStoreInfo()->getPhone() ?></span>
+                </div>
+                <div class="line">
+                    <strong><?php echo __('Shipment Line') ?>:</strong>
+                    <span>0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="receiver-details m-b-50">
+            <div>
+                <strong><?php echo __('Receiver Name') ?>:</strong>
+                <span><?php echo $order->getShippingAddress()->getName() ?></span>
+            </div>
+            <div>
+                <strong><?php echo __('Receiver Company') ?>:</strong>
+                <span><?php echo $order->getShippingAddress()->getCompany() ?></span>
+            </div>
+            <div>
+                <strong><?php echo __('Shipment Telephone') ?>:</strong>
+                <span><?php echo $order->getShippingAddress()->getTelephone() ?></span>
+            </div>
+            <div>
+                <strong><?php echo __('Receiver Address') ?>:</strong>
+                <span><?php echo implode(' ', $order->getShippingAddress()->getStreet()) . ' ' . $order->getShippingAddress()->getCity() ?></span>
+            </div>
+            <div>
+                <strong><?php echo __('Receiver Type') ?>:</strong>
+                <span><?php echo $block->getShipmentType() ?></span>
+            </div>
+        </div>
+
+        <div class="shipment-label-footer d-flex flex-justify-between">
+            <div>
+                <strong><?php echo __('Shipment Billed Client') ?>:</strong>
+                <span><?php echo $block->getStoreInfo()->getName() ?></span>
+            </div>
+            <div>
+                <img src="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.zig-zag.co.il/wp-content/themes/sogo-child/images/logozigzag.png"
+                     alt="Zigzag logo" width="70"/>
+            </div>
+        </div>
+    <?php else: ?>
+        <h2>Tracking number not found for order</h2>
+    <?php endif; ?>
+</div>
+<button onclick="window.print()">Print</button>
+</body>
+</html>
