@@ -35,6 +35,11 @@ class Ship extends Action
     protected $_messageManager;
 
     /**
+     * @var Order[]
+     */
+    protected $_orders;
+
+    /**
      * Ship constructor.
      * @param OrderRepositoryInterface $orderRepository
      * @param InsertShipment $insertShipment
@@ -52,9 +57,9 @@ class Ship extends Action
     {
         parent::__construct($context);
         $this->_orderRepository = $orderRepository;
-        $this->_insertShipment = $insertShipment;
-        $this->_shipping       = $shipping;
-        $this->_messageManager = $messageManager;
+        $this->_insertShipment  = $insertShipment;
+        $this->_shipping        = $shipping;
+        $this->_messageManager  = $messageManager;
     }
 
 
@@ -63,20 +68,29 @@ class Ship extends Action
      */
     public function execute()
     {
-        $orderId = $this->getRequest()->getParam('order_id');
-        /** @var Order $order */
-        $order = $this->_orderRepository->get($orderId);
+        $orderId  = $this->getRequest()->getParam('order_id');
+        $orderIds = $this->getRequest()->getParam('selected');
 
-        if ($order) {
-            $result = $this->_insertShipment->insert($order);
-            if ($result) {
-                $this->_shipping->shipOrder($order, $result);
-                $this->_messageManager->addSuccessMessage(__('ZigZag Module: Shipment Created Successfully. Tracking Number %1', $result));
-            } else {
-                $this->_messageManager->addErrorMessage(__('ZigZag Module: Error occurred. Please Check Error Log'));
+        if ($orderId) {
+            $this->_orders[] = $this->_orderRepository->get($orderId);
+        } elseif ($orderIds) {
+            foreach ($orderIds as $orderId) {
+                $this->_orders[] = $this->_orderRepository->get($orderId);
             }
-        } else {
-            $this->_messageManager->addErrorMessage(__('ZigZag Module: Order Not Found'));
+        }
+
+        foreach ($this->_orders as $order) {
+            if ($order) {
+                $result = $this->_insertShipment->insert($order);
+                if ($result) {
+                    $this->_shipping->shipOrder($order, $result);
+                    $this->_messageManager->addSuccessMessage(__('ZigZag Module: Shipment Created Successfully. Tracking Number %1', $result));
+                } else {
+                    $this->_messageManager->addErrorMessage(__('ZigZag Module: Error occurred. Please Check Error Log'));
+                }
+            } else {
+                $this->_messageManager->addErrorMessage(__('ZigZag Module: Order Not Found'));
+            }
         }
 
         $this->_redirect($this->_redirect->getRefererUrl());

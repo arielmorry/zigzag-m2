@@ -9,6 +9,17 @@
                     <label translate="true">Print ZigZag Shipment Labels</label>
                 </settings>
             </action>
+            <action name="zigzag_shipments">
+                <settings>
+                    <url path="zigzag/order/ship/"/>
+                    <type>zigzag_shipments</type>
+                    <label translate="true">Send Orders To ZigZag</label>
+                    <confirm>
+                        <title translate="true">Please Confirm</title>
+                        <message translate="true">Order Submission to ZigZag Can Take up to 10 sec per order. Please avoid large submissions to prevent timeout errors in your browser</message>
+                    </confirm>
+                </settings>
+            </action>
         </massaction>
     </listingToolbar>
 </listing>
