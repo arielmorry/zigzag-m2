@@ -11,18 +11,16 @@ use Magento\Store\Model\Store;
 use Zigzag\Base\Helper\Data;
 use Magento\Framework\DataObject;
 use Laminas\Barcode\Barcode;
+use Magento\Store\Model\StoreRepository;
 
 class Label extends Template
 {
+    protected $_orders = [];
+
     /**
      * @var Data
      */
     protected $_helper;
-
-    /**
-     * @var OrderInterface
-     */
-    protected $_order;
 
     /**
      * @var Information
@@ -33,6 +31,11 @@ class Label extends Template
      * @var Store
      */
     protected $_store;
+
+    /**
+     * @var StoreRepository
+     */
+    protected $_storeRepository;
 
     /**
      * @param OrderRepositoryInterface $orderRepository
@@ -47,34 +50,50 @@ class Label extends Template
         Store $store,
         Information $storeInfo,
         Data $helper,
+        StoreRepository $storeRepository,
         Context $context,
         array $data = []
     )
     {
         parent::__construct($context, $data);
 
+
         $orderId          = $context->getRequest()->getParam('order_id');
-        $this->_order     = $orderRepository->get($orderId);
+        $orderIds          = $context->getRequest()->getParam('selected');
+
+        if ($orderId) {
+            $this->_orders[] = $orderRepository->get($orderId);
+        } elseif ($orderIds) {
+            foreach ($orderIds as $orderId) {
+                $this->_orders[] = $orderRepository->get($orderId);
+            }
+        }
+
         $this->_store     = $store;
         $this->_storeInfo = $storeInfo;
         $this->_helper    = $helper;
+        $this->_storeRepository    = $storeRepository;
+
     }
 
     /**
      * Get Store info object
      *
+     * @param OrderInterface $order
      * @return DataObject
      */
-    public function getStoreInfo()
+    public function getStoreInfo($order)
     {
-        return $this->_storeInfo->getStoreInformationObject($this->_store);
+        $store = $this->_storeRepository->get($order->getStoreId());
+        return $this->_storeInfo->getStoreInformationObject($store);
 
     }
 
     /**
+     * @param $order
      * @return string
      */
-    public function getBarcodeBase64()
+    public function getBarcodeBase64($order)
     {
         $renderer = Barcode::factory(
             'code128',
@@ -83,7 +102,7 @@ class Label extends Template
                 'barHeight'     => 80,
                 'barThickWidth' => 6,
                 'barThinWidth'  => 2,
-                'text'          => $this->getTrackingNumber()
+                'text'          => $this->getTrackingNumber($order)
             ],
         );
 
@@ -95,27 +114,32 @@ class Label extends Template
     }
 
     /**
-     * @return bool|OrderInterface
+     * @return array|OrderInterface[]
      */
-    public function getOrder()
+    public function getOrders()
     {
-        return $this->_order ?? false;
+        return $this->_orders;
     }
 
-    public function getShipmentType()
+    /**
+     * @param OrderInterface $order
+     * @return string
+     */
+    public function getShipmentType($order)
     {
         return $this->_helper->getShipmentCodeByCarrierCode(
-            $this->_order->getShippingMethod(true)->getCarrierCode()
+            $order->getShippingMethod(true)->getCarrierCode()
         );
     }
 
     /**
+     * @param OrderInterface $order
      * @return string|bool
      */
-    public function getTrackingNumber()
+    public function getTrackingNumber($order)
     {
-        return $this->_order->getTracksCollection()->count() ?
-            $this->_order->getTracksCollection()->getFirstItem()->getTrackNumber() :
+        return $order->getTracksCollection()->count() ?
+            $order->getTracksCollection()->getFirstItem()->getTrackNumber() :
             false;
     }
 

@@ -2,10 +2,11 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 /** @var \Zigzag\Base\Block\Adminhtml\Order\Label $block */
-/** @var \Magento\Sales\Model\Order $order */
-$order          = $block->getOrder();
-$trackingNumber = $block->getTrackingNumber();
+/** @var \Magento\Sales\Api\Data\OrderInterface[] $orders */
+
+$orders          = $block->getOrders();
 ?>
 <!doctype html>
 <html>
@@ -87,23 +88,26 @@ $trackingNumber = $block->getTrackingNumber();
 </head>
 
 <body>
+<?php foreach ($orders as $order): ?>
 <div class="admin-zigzag-label">
-    <?php if ($trackingNumber): ?>
+    <?php if ($block->getTrackingNumber($order)): ?>
         <div class="barcode-wrapper text-center m-b-50">
-            <div class="barcode"><img src="<?php echo $block->getBarcodeBase64() ?>" alt=""></div>
+            <div class="barcode"><img src="<?php echo $block->getBarcodeBase64($order) ?>" alt=""></div>
         </div>
         <div class="sender-details m-b-50">
             <div class="row">
                 <strong><?php echo __('Shipment Sender') ?>:</strong>
-                <span><?php echo $block->getStoreInfo()->getName() ?></span> -
-                <span><?php echo $block->getStoreInfo()->getData('street_line1') ?></span> -
-                <span><?php echo $block->getStoreInfo()->getData('street_line2') ?></span>
-                <span><?php echo $block->getStoreInfo()->getCity() ?></span>
+                <span><?php echo $block->getStoreInfo($order)->getName() ?></span> -
+                <span><?php echo $block->getStoreInfo($order)->getData('street_line1') ?></span>
+                <?php if($block->getStoreInfo($order)->getData('street_line2')): ?>
+                     - <span><?php echo $block->getStoreInfo($order)->getData('street_line2') ?></span>
+                <?php endif ?>
+                <span><?php echo $block->getStoreInfo($order)->getCity() ?></span>
             </div>
             <div class="row d-flex flex-justify-between">
                 <div class="phone">
                     <strong><?php echo __('Shipment Telephone') ?>:</strong>
-                    <span><?php echo $block->getStoreInfo()->getPhone() ?></span>
+                    <span><?php echo $block->getStoreInfo($order)->getPhone() ?></span>
                 </div>
                 <div class="line">
                     <strong><?php echo __('Shipment Line') ?>:</strong>
@@ -131,14 +135,14 @@ $trackingNumber = $block->getTrackingNumber();
             </div>
             <div>
                 <strong><?php echo __('Receiver Type') ?>:</strong>
-                <span><?php echo $block->getShipmentType() ?></span>
+                <span><?php echo $block->getShipmentType($order) ?></span>
             </div>
         </div>
 
         <div class="shipment-label-footer d-flex flex-justify-between">
             <div>
                 <strong><?php echo __('Shipment Billed Client') ?>:</strong>
-                <span><?php echo $block->getStoreInfo()->getName() ?></span>
+                <span><?php echo $block->getStoreInfo($order)->getName() ?></span>
             </div>
             <div>
                 <img src="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.zig-zag.co.il/wp-content/themes/sogo-child/images/logozigzag.png"
@@ -146,9 +150,10 @@ $trackingNumber = $block->getTrackingNumber();
             </div>
         </div>
     <?php else: ?>
-        <h2>Tracking number not found for order</h2>
+        <h2 class="text-center">Tracking number not found for order Incremented Id <?php echo $order->getIncrementId() ?></h2>
     <?php endif; ?>
 </div>
+<?php endforeach; ?>
 <button onclick="window.print()">Print</button>
 </body>
 </html>

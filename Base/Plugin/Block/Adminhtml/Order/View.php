@@ -41,7 +41,7 @@ class View
             'order_ship_to_zigzag',
             [
                 'label'   => __('Ship Order To ZigZag'),
-                'onclick' => 'setLocation(\'' . $url . '\')',
+                'onclick' =>  'setLocation(\'' . $url . '\')',
                 'class'   => 'ship-to-zigzag'
             ]
         );
