@@ -42,6 +42,7 @@ class Label extends Template
      * @param Store $store
      * @param Information $storeInfo
      * @param Data $helper
+     * @param StoreRepository $storeRepository
      * @param Context $context
      * @param array $data
      */
@@ -58,8 +59,8 @@ class Label extends Template
         parent::__construct($context, $data);
 
 
-        $orderId          = $context->getRequest()->getParam('order_id');
-        $orderIds          = $context->getRequest()->getParam('selected');
+        $orderId  = $context->getRequest()->getParam('order_id');
+        $orderIds = $context->getRequest()->getParam('selected');
 
         if ($orderId) {
             $this->_orders[] = $orderRepository->get($orderId);
@@ -69,10 +70,10 @@ class Label extends Template
             }
         }
 
-        $this->_store     = $store;
-        $this->_storeInfo = $storeInfo;
-        $this->_helper    = $helper;
-        $this->_storeRepository    = $storeRepository;
+        $this->_store           = $store;
+        $this->_storeInfo       = $storeInfo;
+        $this->_helper          = $helper;
+        $this->_storeRepository = $storeRepository;
 
     }
 
