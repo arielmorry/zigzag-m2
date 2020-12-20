@@ -6,4 +6,7 @@
     <type name="Magento\Sales\Block\Adminhtml\Order\View">
         <plugin name="zigzag_carrier_admin_order_view" type="Zigzag\Base\Plugin\Block\Adminhtml\Order\View"/>
     </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <plugin name="grid_custom_column" type="Zigzag\Base\Plugin\View\Element\UiComponent\DataProvider\CollectionFactory" />
+    </type>
 </config>

@@ -22,4 +22,12 @@
             </action>
         </massaction>
     </listingToolbar>
+
+    <columns name="sales_order_columns">
+        <column name="shipment_track">
+            <settings>
+                <label translate="true">Tracking Number</label>
+            </settings>
+        </column>
+    </columns>
 </listing>
