@@ -4,6 +4,7 @@ namespace Zigzag\Base\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Model\Order;
@@ -26,6 +27,11 @@ class QuoteSubmitBefore implements ObserverInterface
         $this->_quoteRepository = $quoteRepository;
     }
 
+    /**
+     * @param Observer $observer
+     * @return $this|void
+     * @throws NoSuchEntityException
+     */
     public function execute(Observer $observer)
     {
         /** @var Order $order */

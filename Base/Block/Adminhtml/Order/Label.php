@@ -4,6 +4,7 @@ namespace Zigzag\Base\Block\Adminhtml\Order;
 
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Model\Information;
@@ -82,6 +83,7 @@ class Label extends Template
      *
      * @param OrderInterface $order
      * @return DataObject
+     * @throws NoSuchEntityException
      */
     public function getStoreInfo($order)
     {

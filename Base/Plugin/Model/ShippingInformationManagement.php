@@ -21,6 +21,11 @@ class ShippingInformationManagement
      */
     protected $_helper;
 
+    /**
+     * ShippingInformationManagement constructor.
+     * @param QuoteRepository $quoteRepository
+     * @param Data $data
+     */
     public function __construct(
         QuoteRepository $quoteRepository,
         Data $data

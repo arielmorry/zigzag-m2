@@ -52,6 +52,11 @@ class Config
         $this->_cacheFrontendPool = $cacheFrontendPool;
     }
 
+    /**
+     * @param MagentoConfig $config
+     * @param $result
+     * @return mixed
+     */
     public function afterSave(MagentoConfig $config, $result)
     {
         if ($config->getSection() == 'carriers') {
