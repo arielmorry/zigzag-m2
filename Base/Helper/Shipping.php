@@ -110,8 +110,8 @@ class Shipping extends AbstractHelper
     public function shipOrder(Order $order, $trackingNumber = 0)
     {
         // Save order to repository so we can retrieve full info
-        $order = $this->_orderRepository->save($order);
-        $carrier = $this->_carrierFactory->get($order->getShippingMethod(true)->getCarrierCode());
+        $order             = $this->_orderRepository->save($order);
+        $carrier           = $this->_carrierFactory->get($order->getShippingMethod(true)->getCarrierCode());
         $createNewShipment = !$order->hasShipments();
 
         if (!$createNewShipment) {
@@ -179,8 +179,8 @@ class Shipping extends AbstractHelper
      */
     public function isCarrierInOrder($order, $carrierCode)
     {
-        $orderCarrierCode = $order->getShippingMethod(true)->getCarrierCode();
-        return $carrierCode == $orderCarrierCode;
+        $shippingMethod = $order->getShippingMethod(true);
+        return $shippingMethod ? $carrierCode == $shippingMethod->getCarrierCode() : false;
     }
 
     /**
